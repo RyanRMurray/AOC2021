@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use std::fmt::Debug;
 use std::fmt::{Display, Formatter, Result};
 use std::str::FromStr;
@@ -8,6 +9,7 @@ use std::time::Instant;
 pub type Solution = fn(String) -> Answer; // Solution functions
 
 type Record = (String, Instant); // Recording an answer and its timestamp
+type DisplayableRef<'a> = &'a dyn Display;
 
 //Functions
 
@@ -45,24 +47,42 @@ impl Default for Answer {
 
 impl Display for Answer {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        match &self.part1 {
-            None => write!(f, "Part 1 is not yet implemented\n"),
-            Some((res1, t1)) => {
-                let d1 = t1.saturating_duration_since(self.start);
-                write!(f, "Part 1 Result: {}\nPart 1 Runtime: {:?}\n", res1, d1)
-                    .expect("Error trying to print Part 1 Results");
+        match (self.part1.as_ref(), self.part2.as_ref()) {
+            (None, _) => write!(f, "Part 1 has not yet been implemented"),
 
-                match &self.part2 {
-                    None => write!(f, "Part 2 is not yet implemented\n"),
-                    Some((res2, t2)) => {
-                        let d2 = t2.saturating_duration_since(*t1);
-                        let d3 = t2.saturating_duration_since(self.start);
-                        write!(
-                            f,
-                            "Part 2 Result: {}\nPart 2 Runtime:  {:?}\nOverall Runtime: {:?}\n",
-                            res2, d2, d3
-                        )
-                    }
+            (Some((r, t)), None) => write!(
+                f,
+                "Part 1 Result: {}\n
+            Part 1 Runtime: {:?}\n
+            Part 2 has not yet been implemented.\n",
+                r,
+                t.saturating_duration_since(self.start)
+            ),
+            (Some((r1, t1)), Some((r2, t2))) => {
+                if t1 != t2 {
+                    write!(
+                        f,
+                        "Part 1 Result: {}\n\
+                    Part 1 Runtime: {:?}\n\
+                    Part 2 Result: {}\n\
+                    Part 2 Runtime: {:?}\n\
+                    Overall Runtime: {:?}\n",
+                        r1,
+                        t1.saturating_duration_since(self.start),
+                        r2,
+                        t2.saturating_duration_since(*t1),
+                        t2.saturating_duration_since(self.start)
+                    )
+                } else {
+                    write!(
+                        f,
+                        "Part 1 Result: {}\n\
+                    Part 2 Result: {}\n\
+                    Overall Runtime: {:?}\n",
+                        r1,
+                        r2,
+                        t1.saturating_duration_since(self.start)
+                    )
                 }
             }
         }
@@ -70,7 +90,7 @@ impl Display for Answer {
 }
 
 impl<'a> Answer {
-    pub fn record(&mut self, res: &'a dyn Display) {
+    pub fn record(&mut self, res: DisplayableRef) {
         match self.part1 {
             None => self.part1 = Some((res.to_string(), Instant::now())),
             Some(_) => match self.part2 {
@@ -78,5 +98,15 @@ impl<'a> Answer {
                 Some(_) => panic!("Cannot write third part to an answer!"),
             },
         }
+    }
+
+    pub fn record_both(&mut self, res1: DisplayableRef, res2: DisplayableRef) {
+        if self.part1.is_some() {
+            panic!("Cannot write both parts to partially recorded answer!")
+        }
+
+        let i = Instant::now();
+        self.part1 = Some((res1.to_string(), i));
+        self.part2 = Some((res2.to_string(), i));
     }
 }

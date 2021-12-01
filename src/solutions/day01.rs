@@ -1,4 +1,4 @@
-use crate::utils::{Answer,simple_parse};
+use crate::utils::{simple_parse, Answer};
 
 pub fn day01(input: String) -> Answer {
     let mut answer = Answer::default();
@@ -10,26 +10,26 @@ pub fn day01(input: String) -> Answer {
     let mut ascending = 0;
     let mut last = vals[0];
 
-    for d in vals[1..].iter(){
-        if d > &last{
+    for d in vals[1..].iter() {
+        if d > &last {
             ascending += 1;
         }
         last = *d;
     }
-    answer.record(&ascending);
 
     //part 2: find ascending steps using 3-length window
     let mut ascending_window = 0;
-    let mut last_sum : u32 = vals[0..3].iter().sum();
-    
-    for i in 2..vals.len(){
-        let s: u32 = vals[i-2..i+1].iter().sum();
-        if s > last_sum{
+    let mut last_sum: u32 = vals[0..3].iter().sum();
+
+    for i in 2..vals.len() {
+        let s: u32 = vals[i - 2..i + 1].iter().sum();
+        if s > last_sum {
             ascending_window += 1;
         }
         last_sum = s;
     }
-    answer.record(&ascending_window);
+
+    answer.record_both(&ascending, &ascending_window);
 
     return answer;
 }
