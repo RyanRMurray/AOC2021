@@ -1,9 +1,31 @@
+use std::fmt::Debug;
 use std::fmt::{Display, Formatter, Result};
+use std::str::FromStr;
 use std::time::Instant;
+
+//Types
 
 pub type Solution = fn(String) -> Answer; // Solution functions
 
 type Record = (String, Instant); // Recording an answer and its timestamp
+
+//Functions
+
+pub fn simple_parse<T>(input: String) -> Vec<T>
+where
+    T: FromStr,
+    <T as FromStr>::Err: Debug,
+{
+    input
+        .lines()
+        .map(|x| {
+            x.parse()
+                .expect("Error parsing input - are you sure it's a simple list?")
+        })
+        .collect::<Vec<T>>()
+}
+
+//Structs
 
 pub struct Answer {
     start: Instant,
