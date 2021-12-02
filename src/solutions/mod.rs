@@ -1,4 +1,5 @@
 use crate::utils::Solution;
-pub mod day01;
+mod day01;
+mod day02;
 
-pub const DAYS: [Solution; 1] = [day01::day01];
+pub const DAYS: [Solution; 2] = [day01::day01, day02::day02];

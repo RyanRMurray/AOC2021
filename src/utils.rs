@@ -52,8 +52,8 @@ impl Display for Answer {
 
             (Some((r, t)), None) => write!(
                 f,
-                "Part 1 Result: {}\n
-            Part 1 Runtime: {:?}\n
+                "Part 1 Result: {}\n\
+            Part 1 Runtime: {:?}\n\
             Part 2 has not yet been implemented.\n",
                 r,
                 t.saturating_duration_since(self.start)
