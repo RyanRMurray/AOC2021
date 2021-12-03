@@ -8,14 +8,27 @@ fn bvec_to_u32(v: &Vec<u32>) -> u32 {
         .sum()
 }
 
-fn find_by_criteria(criteria: Vec<u32>, mut nums: Vec<Vec<u32>>) -> Vec<u32>{
+//finds the commonmost element at an index in a series of bvecs
+fn find_commonmost(nums: &Vec<Vec<u32>>, i: usize) -> u32 {
+    let half: u32 = (nums.len() as u32 + 1) / 2;
 
-    for (c,i) in criteria.iter().zip(0..){
-        nums = nums.into_iter().filter(|v| v[i] == *c).collect();
+    let sum: u32 = nums.iter().map(|v| v[i]).sum();
 
-        println!("{}, {:?}", c,nums);
+    if sum >= half {
+        1
+    } else {
+        0
+    }
+}
 
-        if nums.len() == 1{
+//find the bvec that meets the criteria vs. the commonmost bit at each index of the search space
+fn find_by_criteria(criteria: fn(u32, u32) -> bool, mut nums: Vec<Vec<u32>>) -> Vec<u32> {
+    for i in 0..nums[0].len() {
+        let c = find_commonmost(&nums, i);
+
+        nums = nums.into_iter().filter(|v| criteria(v[i], c)).collect();
+
+        if nums.len() == 1 {
             return nums[0].clone();
         }
     }
@@ -52,11 +65,8 @@ pub fn day03(input: String) -> Answer {
     answer.record(&(bvec_to_u32(&gamma) * bvec_to_u32(&epsilon)));
 
     //part 2: apply search criteria to find oxygen and co2 ratings
-    //oxygen
-    let oxygen = find_by_criteria(gamma, nums.clone());
-    let co2 = find_by_criteria(epsilon, nums);
-
-    println!("{:?} {:?}", oxygen, co2);
+    let oxygen = find_by_criteria(|a, b| a == b, nums.clone());
+    let co2 = find_by_criteria(|a, b| a != b, nums);
 
     answer.record(&(bvec_to_u32(&oxygen) * bvec_to_u32(&co2)));
 
