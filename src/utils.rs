@@ -31,6 +31,7 @@ where
 
 pub struct Answer {
     start: Instant,
+    parsed: Option<Instant>,
     part1: Option<Record>,
     part2: Option<Record>,
 }
@@ -39,6 +40,7 @@ impl Default for Answer {
     fn default() -> Self {
         Self {
             start: Instant::now(),
+            parsed: None,
             part1: None,
             part2: None,
         }
@@ -47,49 +49,69 @@ impl Default for Answer {
 
 impl Display for Answer {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        match (self.part1.as_ref(), self.part2.as_ref()) {
-            (None, _) => write!(f, "Part 1 has not yet been implemented"),
+        let parsed;
+        let mut t_last = self.start;
+        match self.parsed {
+            None => {
+                return write!(f, "Answer not yet implemented.");
+            }
+            Some(t) => {
+                parsed = format!(
+                    "Parsed input in: {:?}\n",
+                    t.saturating_duration_since(t_last)
+                );
+                t_last = t
+            }
+        }
 
-            (Some((r, t)), None) => write!(
-                f,
+        let res = match (self.part1.as_ref(), self.part2.as_ref()) {
+            (None, _) => format!("Part 1 has not yet been implemented"),
+
+            (Some((r, t)), None) => format!(
                 "Part 1 Result: {}\n\
             Part 1 Runtime: {:?}\n\
             Part 2 has not yet been implemented.\n",
                 r,
-                t.saturating_duration_since(self.start)
+                t.saturating_duration_since(t_last)
             ),
             (Some((r1, t1)), Some((r2, t2))) => {
                 if t1 != t2 {
-                    write!(
-                        f,
+                    format!(
                         "Part 1 Result: {}\n\
                     Part 1 Runtime: {:?}\n\
                     Part 2 Result: {}\n\
                     Part 2 Runtime: {:?}\n\
                     Overall Runtime: {:?}\n",
                         r1,
-                        t1.saturating_duration_since(self.start),
+                        t1.saturating_duration_since(t_last),
                         r2,
                         t2.saturating_duration_since(*t1),
                         t2.saturating_duration_since(self.start)
                     )
                 } else {
-                    write!(
-                        f,
+                    format!(
                         "Part 1 Result: {}\n\
                     Part 2 Result: {}\n\
+                    Parts 1 & 2 Runtime: {:?}\n\
                     Overall Runtime: {:?}\n",
                         r1,
                         r2,
+                        t1.saturating_duration_since(t_last),
                         t1.saturating_duration_since(self.start)
                     )
                 }
             }
-        }
+        };
+
+        write!(f, "{}{}", parsed, res)
     }
 }
 
 impl<'a> Answer {
+    pub fn record_parsed(&mut self) {
+        self.parsed = Some(Instant::now());
+    }
+
     pub fn record(&mut self, res: DisplayableRef) {
         match self.part1 {
             None => self.part1 = Some((res.to_string(), Instant::now())),

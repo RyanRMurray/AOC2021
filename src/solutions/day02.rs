@@ -26,6 +26,8 @@ pub fn day02(input: String) -> Answer {
         })
         .collect();
 
+    answer.record_parsed();
+
     //part 1: run instrs, multiply depth and distance
     let mut p1_dist = 0;
     let mut p1_depth = 0;

@@ -6,6 +6,8 @@ pub fn day01(input: String) -> Answer {
     //parse into list of ints
     let vals = simple_parse::<u32>(input);
 
+    answer.record_parsed();
+
     //part 1: count all ascending steps
     let mut p1_asc = 0;
     let mut p1_last = vals[2];

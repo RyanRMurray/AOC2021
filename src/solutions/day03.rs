@@ -52,6 +52,8 @@ pub fn day03(input: String) -> Answer {
     let bit_len = nums[0].len() as u32;
     let half: u32 = nums.len() as u32 / 2;
 
+    answer.record_parsed();
+
     //part 1: get modal result by first summing everything and then constructing final vector
     let sums = nums.iter().fold(vec![0; bit_len as usize], |s, v| {
         s.iter().zip(v.iter()).map(|(&a, &b)| a + b).collect()

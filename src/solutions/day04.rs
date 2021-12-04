@@ -73,6 +73,8 @@ pub fn day04(input: String) -> Answer {
         .map(|m| Bingo::new(m))
         .collect();
 
+    answer.record_parsed();
+
     //part 1: get the sum of the unmarked spaces of the winning sheet times the last number
     //part 2: get last score
     let mut scores: Vec<u32> = vec![];
