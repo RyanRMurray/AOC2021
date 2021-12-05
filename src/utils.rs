@@ -110,7 +110,7 @@ impl Display for Answer {
                 .saturating_duration_since(self.start)
         );
 
-        write!(f, "{}{}{}{}{}", parsed, p1, p2, ts, overall)
+        write!(f, "{}{}{}{}{}", p1, p2, parsed, ts, overall)
     }
 }
 
