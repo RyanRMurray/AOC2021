@@ -1,4 +1,3 @@
-#![allow(dead_code)]
 use std::cmp::Eq;
 use std::collections::HashMap;
 use std::fmt::Debug;
@@ -11,8 +10,8 @@ use std::time::Instant;
 
 pub type Solution = fn(String) -> Answer; // Solution functions
 
-type Record = (String, Instant); // Recording an answer and its timestamp
-type DisplayableRef<'a> = &'a dyn Display;
+type DisplayableRef<'a> = &'a dyn Display; // Shorthand for Answer struct stuff
+
 //Functions
 
 pub fn simple_parse<T>(input: String) -> Vec<T>
@@ -157,6 +156,9 @@ pub trait Point<Rhs = Self> {
     fn neighbours_4(&self) -> Vec<Rhs>;
 }
 
+trait GridKey: Point + Eq + Hash + Copy {}
+trait GridVal: Default + PartialEq + Copy {}
+
 pub type Pt2d = (i32, i32);
 
 impl Point for Pt2d {
@@ -188,13 +190,13 @@ impl Point for Pt2d {
     }
 }
 
-pub struct Grid<K: Point, V: Default + PartialEq> {
+pub struct Grid<K: GridKey, V: GridVal> {
     pub grid: HashMap<K, V>,
     default: V,
     pub ptr: K,
 }
 
-impl<K: Point + Eq + Hash + Copy, V: Default + PartialEq + Copy> Grid<K, V> {
+impl<K: GridKey, V: GridVal> Grid<K, V> {
     pub fn new(ptr: K, def: V) -> Self {
         Self {
             grid: HashMap::new(),
