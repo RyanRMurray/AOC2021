@@ -1,6 +1,9 @@
 #![allow(dead_code)]
+use std::cmp::Eq;
+use std::collections::HashMap;
 use std::fmt::Debug;
 use std::fmt::{Display, Formatter, Result};
+use std::hash::Hash;
 use std::str::FromStr;
 use std::time::Instant;
 
@@ -10,7 +13,6 @@ pub type Solution = fn(String) -> Answer; // Solution functions
 
 type Record = (String, Instant); // Recording an answer and its timestamp
 type DisplayableRef<'a> = &'a dyn Display;
-
 //Functions
 
 pub fn simple_parse<T>(input: String) -> Vec<T>
@@ -143,5 +145,72 @@ impl<'a> Answer {
         self.part2 = Some(res2.to_string());
         self.time1 = Some(i);
         self.time2 = Some(i);
+    }
+}
+
+pub trait Point<Rhs = Self> {
+    fn add(self, other: Rhs) -> Self;
+    fn mul(self, v: i32) -> Self;
+    fn rot90cw(self) -> Self;
+    fn rot90acw(self) -> Self;
+    fn mag(self) -> i32;
+    fn neighbours_4(&self) -> Vec<Rhs>;
+}
+
+pub type Pt2d = (i32, i32);
+
+impl Point for Pt2d {
+    fn add(self, (ox, oy): Pt2d) -> Self {
+        (self.0 + ox, self.1 + oy)
+    }
+
+    fn mul(self, v: i32) -> Self {
+        (self.0 * v, self.1 * v)
+    }
+
+    fn rot90cw(self) -> Self {
+        (-self.1, self.0)
+    }
+
+    fn rot90acw(self) -> Self {
+        (self.1, -self.0)
+    }
+
+    fn mag(self) -> i32 {
+        self.0.abs() + self.1.abs()
+    }
+
+    fn neighbours_4(&self) -> Vec<Pt2d> {
+        [(0, -1), (1, 0), (0, 1), (-1, 0)]
+            .iter()
+            .map(|n| self.add(*n))
+            .collect()
+    }
+}
+
+pub struct Grid<K: Point, V: Default + PartialEq> {
+    pub grid: HashMap<K, V>,
+    default: V,
+    pub ptr: K,
+}
+
+impl<K: Point + Eq + Hash + Copy, V: Default + PartialEq + Copy> Grid<K, V> {
+    pub fn new(ptr: K, def: V) -> Self {
+        Self {
+            grid: HashMap::new(),
+            default: def,
+            ptr: ptr,
+        }
+    }
+
+    pub fn update(&mut self, k: K, u: fn(V) -> V) {
+        self.grid
+            .insert(k, u(*self.grid.get(&k).unwrap_or(&self.default)));
+    }
+
+    pub fn updates(&mut self, ks: Vec<K>, u: fn(V) -> V) {
+        for k in ks {
+            self.update(k, u)
+        }
     }
 }
