@@ -156,8 +156,8 @@ pub trait Point<Rhs = Self> {
     fn neighbours_4(&self) -> Vec<Rhs>;
 }
 
-pub trait GridKey: Point + Eq + Hash + Copy {}
-pub trait GridVal: Default + PartialEq + Copy {}
+pub trait GridKey:  {}
+pub trait GridVal:  {}
 
 pub type Pt2d = (i32, i32);
 
@@ -190,17 +190,13 @@ impl Point for Pt2d {
     }
 }
 
-impl GridKey for Pt2d {}
-
-impl GridVal for i32 {}
-
-pub struct Grid<K: GridKey, V: GridVal> {
+pub struct Grid<K: Point, V> {
     pub grid: HashMap<K, V>,
     default: V,
     pub ptr: K,
 }
 
-impl<K: GridKey, V: GridVal> Grid<K, V> {
+impl<K: Point + Eq + Hash + Copy, V: PartialEq + Copy> Grid<K, V> {
     pub fn new(ptr: K, def: V) -> Self {
         Self {
             grid: HashMap::new(),
