@@ -1,4 +1,4 @@
-use crate::utils::{Answer,simple_parse};
+use crate::utils::{simple_parse, Answer};
 use std::collections::VecDeque;
 
 fn day_passes<'a>(mut population: VecDeque<usize>) -> VecDeque<usize> {

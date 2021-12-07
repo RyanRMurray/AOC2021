@@ -4,7 +4,7 @@ pub fn day01(input: String) -> Answer {
     let mut answer = Answer::default();
 
     //parse into list of ints
-    let vals = simple_parse::<u32>(input,"\n");
+    let vals = simple_parse::<u32>(input, "\n");
 
     answer.record_parsed();
 
