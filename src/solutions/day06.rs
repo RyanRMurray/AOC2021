@@ -1,4 +1,4 @@
-use crate::utils::Answer;
+use crate::utils::{Answer,simple_parse};
 use std::collections::VecDeque;
 
 fn day_passes<'a>(mut population: VecDeque<usize>) -> VecDeque<usize> {
@@ -16,7 +16,7 @@ pub fn day06(input: String) -> Answer {
     let mut answer = Answer::default();
 
     //parse input into populations by age
-    let nums: Vec<u8> = input.split(",").map(|x| x.parse().unwrap()).collect();
+    let nums = simple_parse::<u8>(input, ",");
     let mut pops: VecDeque<usize> = (0..9)
         .map(|v| nums.iter().filter(|x| **x == v).count())
         .collect();
@@ -31,11 +31,11 @@ pub fn day06(input: String) -> Answer {
     answer.record(&pops.iter().sum::<usize>());
 
     //part 2: further proliferation
-    for _ in 0..(256-80){
+    for _ in 0..(256 - 80) {
         pops = day_passes(pops)
     }
 
     answer.record(&pops.iter().sum::<usize>());
-    
+
     return answer;
 }

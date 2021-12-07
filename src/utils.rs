@@ -14,13 +14,13 @@ type DisplayableRef<'a> = &'a dyn Display; // Shorthand for Answer struct stuff
 
 //Functions
 
-pub fn simple_parse<T>(input: String) -> Vec<T>
+pub fn simple_parse<T>(input: String, separator: &str) -> Vec<T>
 where
     T: FromStr,
     <T as FromStr>::Err: Debug,
 {
     input
-        .lines()
+        .split(separator)
         .map(|x| {
             x.parse()
                 .expect("Error parsing input - are you sure it's a simple list?")
@@ -156,8 +156,8 @@ pub trait Point<Rhs = Self> {
     fn neighbours_4(&self) -> Vec<Rhs>;
 }
 
-pub trait GridKey:  {}
-pub trait GridVal:  {}
+pub trait GridKey {}
+pub trait GridVal {}
 
 pub type Pt2d = (i32, i32);
 
