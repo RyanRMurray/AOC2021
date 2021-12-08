@@ -35,6 +35,8 @@ pub fn day08(input: String) -> Answer {
     for mut l in patterns {
         l.0.sort_by(|a, b| a.len().partial_cmp(&b.len()).unwrap());
         let mut res = "".to_owned();
+        //since we know for certain where one and four will be in the list when we've sorted it by length,
+        //we can use them as comparators for other numbers with similar segments
         let one: Vec<char> = l.0[0].chars().collect();
         let four: Vec<char> = l.0[2].chars().collect();
 
@@ -45,16 +47,16 @@ pub fn day08(input: String) -> Answer {
                     c.chars().filter(|x| four.contains(x)).count(), //compare against 4
                     c.chars().filter(|x| one.contains(x)).count(),  //compare against 1
                 ) {
-                    (3, _, _) => "7",
-                    (4, _, _) => "4",
-                    (7, _, _) => "8",
-                    (5, 2, _) => "2",
-                    (5, 3, 1) => "5",
-                    (5, 3, 2) => "3",
-                    (6, 4, _) => "9",
                     (6, 3, 1) => "6",
                     (6, 3, 2) => "0",
-                    (_, _, _) => "1",
+                    (6, 4, _) => "9",
+                    (5, 3, 1) => "5",
+                    (5, 3, 2) => "3",
+                    (5, 2, _) => "2",
+                    (2, _, _) => "1",
+                    (3, _, _) => "7",
+                    (4, _, _) => "4",
+                    _ => "8",
                 },
             )
         }
