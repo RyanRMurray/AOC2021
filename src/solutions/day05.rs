@@ -1,6 +1,7 @@
 use crate::utils::{Answer, Grid, Pt2d};
 use regex::Regex;
 use std::cmp::max;
+use std::collections::HashMap;
 
 fn diff(a: i32, b: i32) -> i32 {
     if a < b {
@@ -54,7 +55,7 @@ pub fn day05(input: String) -> Answer {
     answer.record_parsed();
 
     //part 1: find overlapping straight line points
-    let mut g = Grid::new((0, 0), 0);
+    let mut g = Grid::new(HashMap::new(), (0, 0), 0);
 
     for l in &lines {
         match l {

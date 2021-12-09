@@ -197,9 +197,9 @@ pub struct Grid<K: Point, V> {
 }
 
 impl<K: Point + Eq + Hash + Copy, V: PartialEq + Copy> Grid<K, V> {
-    pub fn new(ptr: K, def: V) -> Self {
+    pub fn new(g: HashMap<K, V>, ptr: K, def: V) -> Self {
         Self {
-            grid: HashMap::new(),
+            grid: g,
             default: def,
             ptr: ptr,
         }
