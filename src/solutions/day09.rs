@@ -1,5 +1,5 @@
 use crate::utils::{Answer, Grid, Point, Pt2d};
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::HashMap;
 
 fn compare_to_ns(g: &Grid<Pt2d, u8>, p: Pt2d, cmp: fn(u8, u8) -> bool) -> bool {
     let v = g.grid.get(&p).unwrap();
@@ -8,29 +8,6 @@ fn compare_to_ns(g: &Grid<Pt2d, u8>, p: Pt2d, cmp: fn(u8, u8) -> bool) -> bool {
     ns.iter()
         .filter_map(|n| g.grid.get(&n))
         .all(|nv| cmp(*v, *nv))
-}
-
-//finds all points reachable from p in g
-fn flood_find(g: &Grid<Pt2d, u8>, p: Pt2d) -> HashSet<Pt2d> {
-    let mut found = HashSet::new();
-    found.insert(p);
-    let mut search: VecDeque<Pt2d> = VecDeque::from([p]);
-
-    while search.len() > 0 {
-        let around = search.pop_front().unwrap();
-        //get neighbours in basin
-        let ns: HashSet<Pt2d> = around
-            .neighbours_4()
-            .iter()
-            .filter(|q| !found.contains(q) && *g.grid.get(q).unwrap_or(&9) < 9)
-            .cloned()
-            .collect();
-
-        found.extend(ns.clone());
-        search.extend(ns);
-    }
-
-    return found;
 }
 
 pub fn day09(input: String) -> Answer {
@@ -49,7 +26,7 @@ pub fn day09(input: String) -> Answer {
         .flatten()
         .collect();
 
-    let g: Grid<Pt2d, u8> = Grid::new(m, (0, 0), 0);
+    let g: Grid<Pt2d, u8> = Grid::new(m, (0, 0), 9);
 
     answer.record_parsed();
 
@@ -71,7 +48,10 @@ pub fn day09(input: String) -> Answer {
 
     //part 2: multiply the size of the three largest basins
     //very lenient puzzle, since we are guaranteed each lowest point belonging to one solitary basin with no overlap!
-    let mut basin_sizes: Vec<usize> = lowests.iter().map(|l| flood_find(&g, *l).len()).collect();
+    let mut basin_sizes: Vec<usize> = lowests
+        .iter()
+        .map(|l| g.flood_find(*l, |x| x < 9).len())
+        .collect();
     //sort in descending order
     basin_sizes.sort();
     basin_sizes.reverse();

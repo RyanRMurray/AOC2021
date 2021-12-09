@@ -1,5 +1,5 @@
 use std::cmp::Eq;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet, VecDeque};
 use std::fmt::Debug;
 use std::fmt::{Display, Formatter, Result};
 use std::hash::Hash;
@@ -214,5 +214,33 @@ impl<K: Point + Eq + Hash + Copy, V: PartialEq + Copy> Grid<K, V> {
         for k in ks {
             self.update(k, u)
         }
+    }
+
+    //get value or default
+    pub fn get_def(&self, p: &K) -> V {
+        *self.grid.get(p).unwrap_or(&self.default)
+    }
+
+    //finds all points reachable from p in grid under some criteria
+    pub fn flood_find(&self, p: K, limiter: fn(V) -> bool) -> HashSet<K> {
+        let mut found = HashSet::new();
+        found.insert(p);
+        let mut search: VecDeque<K> = VecDeque::from([p]);
+
+        while search.len() > 0 {
+            let around = search.pop_front().unwrap();
+            //get neighbours in basin
+            let ns: HashSet<K> = around
+                .neighbours_4()
+                .iter()
+                .filter(|q| !found.contains(q) && limiter(self.get_def(q)))
+                .cloned()
+                .collect();
+
+            found.extend(ns.clone());
+            search.extend(ns);
+        }
+
+        return found;
     }
 }
