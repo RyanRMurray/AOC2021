@@ -229,7 +229,7 @@ impl<K: Point + Eq + Hash + Copy, V: PartialEq + Copy> Grid<K, V> {
 
         while search.len() > 0 {
             let around = search.pop_front().unwrap();
-            //get neighbours in basin
+
             let ns: HashSet<K> = around
                 .neighbours_4()
                 .iter()
