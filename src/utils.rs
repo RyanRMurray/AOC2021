@@ -154,6 +154,7 @@ pub trait Point<Rhs = Self> {
     fn rot90acw(self) -> Self;
     fn mag(self) -> i32;
     fn neighbours_4(&self) -> Vec<Rhs>;
+    fn neighbours_8(&self) -> Vec<Rhs>;
 }
 
 pub trait GridKey {}
@@ -187,6 +188,22 @@ impl Point for Pt2d {
             .iter()
             .map(|n| self.add(*n))
             .collect()
+    }
+
+    fn neighbours_8(&self) -> Vec<Pt2d> {
+        [
+            (0, -1),
+            (1, 0),
+            (0, 1),
+            (-1, 0),
+            (-1, -1),
+            (1, -1),
+            (-1, 1),
+            (1, 1),
+        ]
+        .iter()
+        .map(|n| self.add(*n))
+        .collect()
     }
 }
 
