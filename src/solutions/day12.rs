@@ -71,7 +71,7 @@ pub fn day12(input: String) -> Answer {
     let p1 = find_paths(&adjs, false, HashSet::new(), Node::Start);
     answer.record(&p1);
 
-    //part 1: enumerate paths from start to end
+    //part 2: enumerate paths from start to end with one repeat visit to a small cave allowed
     let p2 = find_paths(&adjs, true, HashSet::new(), Node::Start);
     answer.record(&p2);
 
