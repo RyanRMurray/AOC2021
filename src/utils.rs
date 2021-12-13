@@ -261,3 +261,29 @@ impl<K: Point + Eq + Hash + Copy, V: PartialEq + Copy> Grid<K, V> {
         return found;
     }
 }
+
+impl<V: PartialEq + Copy> Grid<Pt2d, V> {
+    pub fn bounds(&self) -> (i32, i32, i32, i32) {
+        self.grid.keys().fold((0, 0, 0, 0), |bounds, pt| {
+            (
+                i32::min(pt.0, bounds.0),
+                i32::min(pt.1, bounds.1),
+                i32::max(pt.0, bounds.2),
+                i32::max(pt.1, bounds.3),
+            )
+        })
+    }
+
+    pub fn print_2d<'a>(&self, pfunc: fn(V) -> char) -> String {
+        let mut res = String::from("\n");
+        let (min_x, min_y, max_x, max_y) = self.bounds();
+
+        for y in min_y..max_y + 1 {
+            for x in min_x..max_x + 1 {
+                res.push(pfunc(self.get_def(&(x, y))));
+            }
+            res.push('\n')
+        }
+        res
+    }
+}
