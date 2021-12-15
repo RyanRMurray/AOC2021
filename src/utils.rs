@@ -263,6 +263,22 @@ impl<K: Point + Eq + Hash + Copy, V: PartialEq + Copy> Grid<K, V> {
 }
 
 impl<V: PartialEq + Copy> Grid<Pt2d, V> {
+    pub fn from(input: String, def: V, p: fn(char) -> V) -> Self {
+        let g: HashMap<Pt2d, V> = input
+            .lines()
+            .enumerate()
+            .map(|(y, l)| {
+                l.chars()
+                    .enumerate()
+                    .map(|(x, c)| ((x as i32, y as i32), p(c)))
+                    .collect::<Vec<_>>()
+            })
+            .flatten()
+            .collect();
+
+        Grid::new(g, (0, 0), def)
+    }
+
     pub fn bounds(&self) -> (i32, i32, i32, i32) {
         self.grid.keys().fold((0, 0, 0, 0), |bounds, pt| {
             (

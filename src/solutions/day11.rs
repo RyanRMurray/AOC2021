@@ -1,5 +1,4 @@
 use crate::utils::{Answer, Grid, Point, Pt2d};
-use std::collections::HashMap;
 
 fn find_bursting(g: &Grid<Pt2d, u8>) -> Vec<Pt2d> {
     g.grid
@@ -56,19 +55,7 @@ pub fn day11(input: String) -> Answer {
     let mut answer = Answer::default();
 
     //parse into grid
-    let m: HashMap<Pt2d, u8> = input
-        .lines()
-        .enumerate()
-        .map(|(y, l)| {
-            l.chars()
-                .enumerate()
-                .map(|(x, c)| ((x as i32, y as i32), c.to_digit(10).unwrap() as u8))
-                .collect::<Vec<_>>()
-        })
-        .flatten()
-        .collect();
-
-    let mut g: Grid<Pt2d, u8> = Grid::new(m, (0, 0), 9);
+    let mut g = Grid::from(input, 9, |c| c.to_digit(10).unwrap() as u8);
 
     answer.record_parsed();
 
