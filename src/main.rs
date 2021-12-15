@@ -1,3 +1,4 @@
+#![feature(map_first_last)]
 use std::env;
 use std::fs;
 use std::io;
