@@ -13,13 +13,6 @@ struct Packet {
     payload: P,
 }
 
-fn unwrap_payload(pl: P) -> usize {
-    match pl {
-        P::L(x) => x,
-        P::P(_) => panic!("Can't unwrap that!"),
-    }
-}
-
 fn to_number(slice: &[usize]) -> usize {
     (0..slice.len())
         .rev()
@@ -36,10 +29,6 @@ fn version_sum(p: &Packet) -> usize {
 }
 
 fn execute_packet(p: Packet) -> usize {
-    if p.p_type == 4 {
-        return unwrap_payload(p.payload);
-    }
-
     match p.payload {
         P::L(x) => x,
         P::P(xs) => {
