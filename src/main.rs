@@ -4,6 +4,7 @@ use std::fs;
 use std::io;
 mod solutions;
 mod utils;
+extern crate eval;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
