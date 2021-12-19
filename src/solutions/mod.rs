@@ -17,8 +17,9 @@ mod day15;
 mod day16;
 mod day17;
 mod day18;
+mod day19;
 
-pub const DAYS: [Solution; 18] = [
+pub const DAYS: [Solution; 19] = [
     day01::day01,
     day02::day02,
     day03::day03,
@@ -37,4 +38,5 @@ pub const DAYS: [Solution; 18] = [
     day16::day16,
     day17::day17,
     day18::day18,
+    day19::day19,
 ];

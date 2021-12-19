@@ -2,7 +2,7 @@ use crate::utils::{Answer, Grid, Point, Pt2d};
 
 fn compare_to_ns(g: &Grid<Pt2d, u8>, p: Pt2d, cmp: fn(u8, u8) -> bool) -> bool {
     let v = g.grid.get(&p).unwrap();
-    let ns = p.neighbours_4();
+    let ns = p.neighbours_card();
 
     ns.iter()
         .filter_map(|n| g.grid.get(&n))

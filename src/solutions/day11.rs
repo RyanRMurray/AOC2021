@@ -17,7 +17,7 @@ fn step_grid(g: &mut Grid<Pt2d, u8>) {
 fn do_bursts(g: &mut Grid<Pt2d, u8>, bursting: Vec<Pt2d>) {
     let ns: Vec<Pt2d> = bursting
         .iter()
-        .map(|b| b.neighbours_8())
+        .map(|b| b.neighbours_all())
         .flatten()
         .filter(|n| g.grid.contains_key(n))
         .collect();

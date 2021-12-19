@@ -26,7 +26,7 @@ fn height_from(bounds: &(i32, i32, i32, i32), mut vel: Pt2d) -> i32 {
         }
 
         res = i32::max(res, ptr.1);
-        ptr = ptr.add(vel);
+        ptr = ptr.add(&vel);
         vel = accel(vel);
     }
 

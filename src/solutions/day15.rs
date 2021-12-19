@@ -17,7 +17,7 @@ fn find(g: &Grid<Pt2d, usize>, max: i32) -> usize {
 
         //find distance to neighbours
         let ns = c
-            .neighbours_4()
+            .neighbours_card()
             .into_iter()
             .filter(|n| in_bounds(max, n) && !visited.contains(n))
             .map(|n| (v + g.get_def(&n), n));

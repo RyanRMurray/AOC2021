@@ -6,6 +6,8 @@ use std::hash::Hash;
 use std::str::FromStr;
 use std::time::Instant;
 
+use itertools::Itertools;
+
 //Types
 
 pub type Solution = fn(String) -> Answer; // Solution functions
@@ -148,13 +150,12 @@ impl<'a> Answer {
 }
 
 pub trait Point<Rhs = Self> {
-    fn add(self, other: Rhs) -> Self;
+    fn add(self, other: &Rhs) -> Self;
+    fn sub(self, other: &Rhs) -> Self;
     fn mul(self, v: i32) -> Self;
-    fn rot90cw(self) -> Self;
-    fn rot90acw(self) -> Self;
     fn mag(self) -> i32;
-    fn neighbours_4(&self) -> Vec<Rhs>;
-    fn neighbours_8(&self) -> Vec<Rhs>;
+    fn neighbours_card(&self) -> Vec<Rhs>;
+    fn neighbours_all(&self) -> Vec<Rhs>;
 }
 
 pub trait GridKey {}
@@ -163,34 +164,29 @@ pub trait GridVal {}
 pub type Pt2d = (i32, i32);
 
 impl Point for Pt2d {
-    fn add(self, (ox, oy): Pt2d) -> Self {
+    fn add(self, (ox, oy): &Pt2d) -> Self {
         (self.0 + ox, self.1 + oy)
+    }
+
+    fn sub(self, (ox, oy): &Pt2d) -> Self {
+        (self.0 - ox, self.1 - oy)
     }
 
     fn mul(self, v: i32) -> Self {
         (self.0 * v, self.1 * v)
     }
-
-    fn rot90cw(self) -> Self {
-        (-self.1, self.0)
-    }
-
-    fn rot90acw(self) -> Self {
-        (self.1, -self.0)
-    }
-
     fn mag(self) -> i32 {
         self.0.abs() + self.1.abs()
     }
 
-    fn neighbours_4(&self) -> Vec<Pt2d> {
+    fn neighbours_card(&self) -> Vec<Pt2d> {
         [(0, -1), (1, 0), (0, 1), (-1, 0)]
             .iter()
-            .map(|n| self.add(*n))
+            .map(|n| self.add(n))
             .collect()
     }
 
-    fn neighbours_8(&self) -> Vec<Pt2d> {
+    fn neighbours_all(&self) -> Vec<Pt2d> {
         [
             (0, -1),
             (1, 0),
@@ -202,8 +198,50 @@ impl Point for Pt2d {
             (1, 1),
         ]
         .iter()
-        .map(|n| self.add(*n))
+        .map(|n| self.add(n))
         .collect()
+    }
+}
+
+pub type Pt3d = (i32, i32, i32);
+
+impl Point for Pt3d {
+    fn add(self, (ox, oy, oz): &Pt3d) -> Self {
+        (self.0 + ox, self.1 + oy, self.2 + oz)
+    }
+
+    fn sub(self, (ox, oy, oz): &Pt3d) -> Self {
+        (self.0 - ox, self.1 - oy, self.2 - oz)
+    }
+
+    fn mul(self, v: i32) -> Self {
+        (self.0 * v, self.1 * v, self.2 * v)
+    }
+
+    fn mag(self) -> i32 {
+        self.0.abs() + self.1.abs() + self.2.abs()
+    }
+
+    fn neighbours_card(&self) -> Vec<Self> {
+        [
+            (0, 0, 1),
+            (0, 0, -1),
+            (0, 1, 0),
+            (0, -1, 0),
+            (1, 0, 0),
+            (-1, 0, 0),
+        ]
+        .iter()
+        .map(|o| self.add(o))
+        .collect()
+    }
+
+    fn neighbours_all(&self) -> Vec<Self> {
+        (-1..2)
+            .permutations(3)
+            .filter(|n| n.iter().filter(|e| **e == 0).count() != 3)
+            .map(|o| self.add(&(o[0], o[1], o[2])))
+            .collect()
     }
 }
 
@@ -248,7 +286,7 @@ impl<K: Point + Eq + Hash + Copy, V: PartialEq + Copy> Grid<K, V> {
             let around = search.pop_front().unwrap();
 
             let ns: HashSet<K> = around
-                .neighbours_4()
+                .neighbours_card()
                 .iter()
                 .filter(|q| !found.contains(q) && limiter(self.get_def(q)))
                 .cloned()
