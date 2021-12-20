@@ -217,11 +217,11 @@ impl Point for Pt2d {
             (0, -1),
             (1, -1),
             (-1, 0),
-            (0,0),
-            (1,0),
-            (-1,1),
-            (0,1),
-            (1,1)
+            (0, 0),
+            (1, 0),
+            (-1, 1),
+            (0, 1),
+            (1, 1),
         ]
         .iter()
         .map(|n| self.add(n))
@@ -269,19 +269,18 @@ impl Point for Pt3d {
             .map(|o| self.add(&(o[0], o[1], o[2])))
             .collect()
     }
-    
+
     fn neighbourhood(&self) -> Vec<Self> {
         (-1..2)
             .permutations(3)
             .map(|o| self.add(&(o[0], o[1], o[2])))
             .collect()
     }
-
 }
 
 pub struct Grid<K: Point, V> {
     pub grid: HashMap<K, V>,
-    default: V,
+    pub default: V,
     pub ptr: K,
 }
 
@@ -302,6 +301,12 @@ impl<K: Point + Eq + Hash + Copy, V: PartialEq + Copy> Grid<K, V> {
     pub fn updates(&mut self, ks: Vec<K>, u: fn(V) -> V) {
         for k in ks {
             self.update(k, u)
+        }
+    }
+
+    pub fn inserts(&mut self, kvs: Vec<(K, V)>) {
+        for (k, v) in kvs {
+            self.grid.insert(k, v);
         }
     }
 
