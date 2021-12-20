@@ -90,12 +90,12 @@ pub fn day19(input: String) -> Answer {
 
     //part 2: find the greatest manhattan distance between two points
     let mut man = 0;
-    for ((x1,y1,z1),(x2,y2,z2)) in ts.iter().tuple_combinations(){
-        let m = i32::abs(x2-x1) + i32::abs(y2-y1) + i32::abs(z2-z1);
-        man = i32::max(man,m);
+    for ((x1, y1, z1), (x2, y2, z2)) in ts.iter().tuple_combinations() {
+        let m = i32::abs(x2 - x1) + i32::abs(y2 - y1) + i32::abs(z2 - z1);
+        man = i32::max(man, m);
     }
 
     answer.record(&man);
-    
+
     answer
 }

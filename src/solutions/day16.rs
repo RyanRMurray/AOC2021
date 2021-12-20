@@ -1,4 +1,4 @@
-use crate::utils::Answer;
+use crate::utils::{bit_to_n, Answer};
 
 #[derive(Debug, Clone)]
 enum P {
@@ -11,13 +11,6 @@ struct Packet {
     version: usize,
     p_type: usize,
     payload: P,
-}
-
-fn to_number(slice: &[usize]) -> usize {
-    (0..slice.len())
-        .rev()
-        .zip(slice)
-        .fold(0, |sum, (pow, val)| sum + val * usize::pow(2, pow as u32))
 }
 
 fn version_sum(p: &Packet) -> usize {
@@ -59,8 +52,8 @@ fn execute_packet(p: Packet) -> usize {
 }
 
 fn construct_packet(queue: Vec<usize>) -> (Packet, Vec<usize>) {
-    let ver = to_number(&queue[0..3]);
-    let p_t = to_number(&queue[3..6]);
+    let ver = bit_to_n(&queue[0..3]);
+    let p_t = bit_to_n(&queue[3..6]);
     let mut remain;
 
     let pl = match (p_t, queue[6]) {
@@ -76,10 +69,10 @@ fn construct_packet(queue: Vec<usize>) -> (Packet, Vec<usize>) {
                     break;
                 }
             }
-            P::L(to_number(&res))
+            P::L(bit_to_n(&res))
         }
         (_, 0) => {
-            let pl_sz = to_number(&queue[7..22]) as usize;
+            let pl_sz = bit_to_n(&queue[7..22]) as usize;
             remain = queue[22 + pl_sz..].to_vec();
             let mut sub = queue[22..22 + pl_sz].to_vec();
             let mut pls = vec![];
@@ -91,7 +84,7 @@ fn construct_packet(queue: Vec<usize>) -> (Packet, Vec<usize>) {
             P::P(pls)
         }
         _ => {
-            let sub_num = to_number(&queue[7..18]);
+            let sub_num = bit_to_n(&queue[7..18]);
             let mut pls = vec![];
             remain = queue[18..].to_vec();
             for _ in 0..sub_num {

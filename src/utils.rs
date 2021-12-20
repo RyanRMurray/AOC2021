@@ -30,6 +30,14 @@ where
         .collect::<Vec<T>>()
 }
 
+//binary string to integer
+pub fn bit_to_n(slice: &[usize]) -> usize {
+    (0..slice.len())
+        .rev()
+        .zip(slice)
+        .fold(0, |sum, (pow, val)| sum + val * usize::pow(2, pow as u32))
+}
+
 //Structs
 
 pub struct Answer {
@@ -156,6 +164,7 @@ pub trait Point<Rhs = Self> {
     fn mag(self) -> i32;
     fn neighbours_card(&self) -> Vec<Rhs>;
     fn neighbours_all(&self) -> Vec<Rhs>;
+    fn neighbourhood(&self) -> Vec<Rhs>;
 }
 
 pub trait GridKey {}
@@ -196,6 +205,23 @@ impl Point for Pt2d {
             (1, -1),
             (-1, 1),
             (1, 1),
+        ]
+        .iter()
+        .map(|n| self.add(n))
+        .collect()
+    }
+
+    fn neighbourhood(&self) -> Vec<Pt2d> {
+        [
+            (-1, -1),
+            (0, -1),
+            (1, -1),
+            (-1, 0),
+            (0,0),
+            (1,0),
+            (-1,1),
+            (0,1),
+            (1,1)
         ]
         .iter()
         .map(|n| self.add(n))
@@ -243,6 +269,14 @@ impl Point for Pt3d {
             .map(|o| self.add(&(o[0], o[1], o[2])))
             .collect()
     }
+    
+    fn neighbourhood(&self) -> Vec<Self> {
+        (-1..2)
+            .permutations(3)
+            .map(|o| self.add(&(o[0], o[1], o[2])))
+            .collect()
+    }
+
 }
 
 pub struct Grid<K: Point, V> {
