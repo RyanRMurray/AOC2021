@@ -161,14 +161,13 @@ fn add_cube(mut cuboids: Vec<Cuboid>, i: Op) -> Vec<Cuboid> {
     cuboids
 }
 
-fn in_core(cuboid: &Cuboid) -> bool{
-    cuboid.min_x >= -50 &&
-    cuboid.max_x <= 50 &&
-    cuboid.min_y >= -50 &&
-    cuboid.max_y <= 50 &&
-    cuboid.min_z >= -50 &&
-    cuboid.max_z <= 50
-
+fn in_core(cuboid: &Cuboid) -> bool {
+    cuboid.min_x >= -50
+        && cuboid.max_x <= 50
+        && cuboid.min_y >= -50
+        && cuboid.max_y <= 50
+        && cuboid.min_z >= -50
+        && cuboid.max_z <= 50
 }
 
 pub fn day22(input: String) -> Answer {
