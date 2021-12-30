@@ -1,5 +1,6 @@
 #![feature(map_first_last)]
 #![feature(destructuring_assignment)]
+#![feature(drain_filter)]
 use std::env;
 use std::fs;
 use std::io;
